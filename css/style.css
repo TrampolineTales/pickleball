@@ -1,0 +1,21 @@
+html {
+  background-color: #E1EDE1;
+  font-family: 'Abel';
+  text-align: center;
+}
+
+input {
+  margin-top: 5px;
+  border-radius: 5px;
+  border: thin solid #212121;
+  padding: 2px;
+  font-size: 36px;
+}
+
+button {
+  cursor: pointer;
+  text-align: center;
+  border-radius: 5px;
+  font-size: 48px;
+  border: thin solid #212121;
+}
