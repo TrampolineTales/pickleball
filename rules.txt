@@ -1,0 +1,6 @@
+1. Each team must play exactly 4 matches in 1 night.
+2. The league must last exactly 7 weeks.
+3. Each team should play each other the same amount of times throughout the league, OR AS CLOSE AS POSSIBLE.
+4. Timeslots should be added instead of adding courts.
+5. The same matchup can only happen once per night.
+6. If necessary, matchups can duplicate once per night, but all other rules remain.
