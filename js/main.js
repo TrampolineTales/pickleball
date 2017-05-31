@@ -57,20 +57,22 @@ $(document).ready(function() {
 
     for (var i = 0; i < 7; i++) {
       for (var n = 0; n < 4; n++) {
+        matches[i].push(new match(teams.length + offset - 1, teams.length + offset - 2));
+
+        for (var a = 0; a < teams.length / 2 - 2; a++) {
+          matches[i].push(new match(((teams.length + offset) + a) % (teams.length - 1), ((teams.length + offset - 3 - a) % teams.length >= 0) ? ((teams.length + offset - 3 - a) % teams.length) : teams.length - Math.abs((teams.length + offset - 4 - a) % teams.length)));
+        }
+
         if (teams.length % 2 == 0) {
-          matches[i].push(new match(teams.length + offset - 1, teams.length + offset - 2));
-
-          for (var a = 0; a < teams.length / 2 - 2; a++) {
-            matches[i].push(new match(((teams.length + offset) + a) % (teams.length - 1), (teams.length + offset - 3 - a) % teams.length));
-          }
-
           matches[i].push(new match((teams.length + offset - teams.length / 2 - 1) >= 0 ? (teams.length + offset - teams.length / 2 - 1) : teams.length - 1 - Math.abs(teams.length + offset - teams.length / 2 - 1), teams.length - 1));
+        } else {
+          // matches[i].push(new match((teams.length + offset - teams.length / 2 - 1) >= 0 ? Math.round(teams.length + offset - teams.length / 2 - 1) : teams.length - 1 - Math.abs(teams.length + offset - Math.floor(teams.length / 2) - 1), teams.length - 1 - Math.abs(teams.length + offset - Math.round(teams.length / 2) - 1)));
+        }
 
-          offset--;
+        offset--;
 
-          if (offset == -teams.length - 1) {
-            offset = -1;
-          }
+        if (offset == -teams.length - 1) {
+          offset = -1;
         }
       }
     }
