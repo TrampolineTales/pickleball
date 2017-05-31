@@ -14,9 +14,10 @@ function msToTimeString(ms) {
   }
 }
 
-function match(opponentNum) {
+function match(team1Num, team2Num) {
   return {
-    opponentNum: opponentNum,
+    team1Num: team1Num,
+    team2Num: team2Num,
     court: null,
     time: null
   }
@@ -26,8 +27,6 @@ function team(name, num) {
   return {
     name: name,
     num: num,
-    matchesToPlay: [],
-    counter: num
   }
 }
 
@@ -43,7 +42,8 @@ $(document).ready(function() {
 
     var courts = [];
     var teams = [];
-    var matches = [];
+    var matches = [[], [], [], [], [], [], []];
+    var offset = -1;
 
     var startTimeMS = $('#start-time').valueAsNumber;
 
@@ -55,58 +55,37 @@ $(document).ready(function() {
       teams.push(new team('Team #' + (i + 1), i));
     }
 
-    function getAvailableOpponentNum(team1Num) {
-      var num = -1;
-      for (var i = 0; i < teams.length; i++) {
-        num = teams[team1Num].counter % teams.length;
+    for (var i = 0; i < 7; i++) {
+      for (var n = 0; n < 4; n++) {
+        if (teams.length % 2 == 0) {
+          matches[i].push(new match(teams.length + offset - 1, teams.length + offset - 2));
 
-        ////CHECKS IF BEING MATCHED AGAINST SELF OR TEAM WITH MORE MATCHES////
-        if ((num == team1Num) || (teams[num].matchesToPlay.length == 28)) {
-          num = -1;
-          continue;
-        }
-        //////////////////////////////////////////////////////////////////////
+          for (var a = 0; a < teams.length / 2 - 2; a++) {
+            matches[i].push(new match(((teams.length + offset) + a) % (teams.length - 1), (teams.length + offset - 3 - a) % teams.length));
+          }
 
-        if (num != -1) {
-          break;
-        }
-      }
+          matches[i].push(new match((teams.length + offset - teams.length / 2 - 1) >= 0 ? (teams.length + offset - teams.length / 2 - 1) : teams.length - 1 - Math.abs(teams.length + offset - teams.length / 2 - 1), teams.length - 1));
 
-      if (num == -1) {
-        teams[team1Num].counter++;
-        return getAvailableOpponentNum(team1Num);
-      } else {
-        return num;
-      }
-    }
+          offset--;
 
-    // 1. Generate games for each team, making sure the amount of playing is equal
-
-    while (teams.map(function(el) {
-      return el.matchesToPlay.length;
-    }).some(function(el) {
-      return el < 28;
-    })) {
-      for (var i = 0; i < teams.length; i++) {
-        if (teams[i].matchesToPlay.length < 28) {
-          do {
-            var opponentNum = getAvailableOpponentNum(i);
-
-            teams[i].matchesToPlay.push(new match(opponentNum));
-            teams[i].counter++;
-
-            teams[opponentNum].matchesToPlay.push(new match(i));
-            teams[opponentNum].counter += 2;
-          } while (teams[i].matchesToPlay.length % teams.length != 0);
+          if (offset == -teams.length - 1) {
+            offset = -1;
+          }
         }
       }
     }
 
-    for (var i = 0; i < teams.length; i++) {
-      console.log(teams[i].matchesToPlay.map(function(el) {
-        return el.opponentNum;
-      }));
+    for (var i = 0; i < matches[0].length; i++) {
+      console.log(matches[0][i].team1Num, matches[0][i].team2Num);
     }
+
+    ////Testing////
+    // for (var i = 0; i < teams.length; i++) {
+    //   console.log(teams[i].matchesToPlay.map(function(el) {
+    //     return el.opponentNum;
+    //   }));
+    // }
+    ///////////////
 
     // 2. Assign each match to a night and court
 
