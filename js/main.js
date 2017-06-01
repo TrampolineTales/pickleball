@@ -39,9 +39,9 @@ $(document).ready(function() {
       alert('Please enter a number of teams.');
     } else if ($('#courts-num')[0].value == '') {
       alert('Please enter a number of courts.');
-    } else if (isNaN($('#start-time')[0].valueAsNumber)) {
+    } /*else if (isNaN($('#start-time')[0].valueAsNumber)) {
       alert('Please enter a start time.');
-    } else {
+    } */else {
       $schedule.empty();
 
       var timeNum = 0;
