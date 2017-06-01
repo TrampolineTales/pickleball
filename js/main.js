@@ -56,30 +56,69 @@ $(document).ready(function() {
     }
 
     for (var i = 0; i < 7; i++) {
-      for (var n = 0; n < 4; n++) {
-        matches[i].push(new match(teams.length + offset - 1, teams.length + offset - 2));
+      if (teams.length % 2 == 0) {
+        for (var n = 0; n < 4; n++) {
+          matches[i].push(new match(((teams.length + offset - 1) % teams.length >= 0) ? (teams.length + offset - 1) : teams.length - Math.abs((teams.length + offset - 2)), ((teams.length + offset - 2) % teams.length >= 0) ? (teams.length + offset - 2) : teams.length - Math.abs((teams.length + offset - 3))));
 
-        for (var a = 0; a < teams.length / 2 - 2; a++) {
-          matches[i].push(new match(((teams.length + offset) + a) % (teams.length - 1), ((teams.length + offset - 3 - a) % teams.length >= 0) ? ((teams.length + offset - 3 - a) % teams.length) : teams.length - Math.abs((teams.length + offset - 4 - a) % teams.length)));
+          for (var a = 0; a < teams.length / 2 - 2; a++) {
+            matches[i].push(new match(((teams.length + offset) + a) % (teams.length - 1),((teams.length + offset - 3 - a) % teams.length >= 0) ? ((teams.length + offset - 3 -a) % teams.length) : teams.length - Math.abs((teams.length + offset - 4 - a) % teams.length)));
+          }
+
+          matches[i].push(new match((teams.length + offset - teams.length / 2 - 1) >= 0 ? (teams.length + offset - teams.length / 2 - 1) : teams.length - 1 - Math.abs(teams.length+ offset - teams.length / 2 - 1), teams.length - 1));
+
+          offset--;
+
+          if (offset == -teams.length - 1) {
+            offset = -1;
+          }
+        }
+      } else {
+        var counts = [];
+        while (!counts.some(function(el) {
+          return el >= 4;
+        })) {
+          counts = [];
+          for (var c = 0; c < teams.length; c++) {
+            counts.push(0);
+          }
+
+          for (var m = 0; m < matches[i].length; m++) {
+            counts[matches[i][m].team1Num]++;
+            counts[matches[i][m].team2Num]++;
+          }
+
+            // matches[i].push(new match(((teams.length + offset - 1) % teams.length >= 0) ? (teams.length + offset - 1) : teams.length - Math.abs((teams.length + offset - 2)), ((teams.length + offset - 2) % teams.length >= 0) ? (teams.length + offset - 2) : teams.length - Math.abs((teams.length + offset - 3))));
+
+            for (var a = 0; a < Math.floor(teams.length / 2); a++) {
+              matches[i].push(new match(((teams.length + offset) + a) % teams.length, ((teams.length + offset - 1 - a) % teams.length >= 0) ? ((teams.length + offset - 1 - a) % teams.length) : teams.length - Math.abs((teams.length + offset - 1 - a) % teams.length)));
+            }
+
+            // matches[i].push(new match((teams.length + offset - Math.round(teams.length / 2) - 1) >= 0 ? (teams.length + offset - Math.round(teams.length / 2) - 1) : teams.length - 1 - Math.abs(teams.length+ offset - Math.round(teams.length / 2) - 1), teams.length - 1));
+
+            offset--;
+
+          if (offset == -teams.length - 1) {
+            offset = -1;
+          }
+
         }
 
-        if (teams.length % 2 == 0) {
-          matches[i].push(new match((teams.length + offset - teams.length / 2 - 1) >= 0 ? (teams.length + offset - teams.length / 2 - 1) : teams.length - 1 - Math.abs(teams.length + offset - teams.length / 2 - 1), teams.length - 1));
-        } else {
-          // matches[i].push(new match((teams.length + offset - teams.length / 2 - 1) >= 0 ? Math.round(teams.length + offset - teams.length / 2 - 1) : teams.length - 1 - Math.abs(teams.length + offset - Math.floor(teams.length / 2) - 1), teams.length - 1 - Math.abs(teams.length + offset - Math.round(teams.length / 2) - 1)));
-        }
-
-        offset--;
-
-        if (offset == -teams.length - 1) {
-          offset = -1;
+        for (var c = 0; c < counts.length; c++) {
+          if (counts[c] == 4) {
+            counts.splice(c, 1);
+            c--;
+          }
         }
       }
     }
 
-    for (var i = 0; i < matches[0].length; i++) {
-      console.log(matches[0][i].team1Num, matches[0][i].team2Num);
+    for (var a = 0; a < 7; a++) {
+      console.log('NIGHT ' + (a + 1));
+      for (var i = 0; i < matches[a].length; i++) {
+        console.log(matches[a][i].team1Num, matches[a][i].team2Num);
+      }
     }
+
 
     ////Testing////
     // for (var i = 0; i < teams.length; i++) {
