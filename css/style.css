@@ -19,3 +19,18 @@ button {
   font-size: 48px;
   border: thin solid #212121;
 }
+
+table {
+  margin: 0 auto;
+  font-size: 36px;
+}
+
+th {
+  border: solid thin #000;
+  background-color: grey;
+}
+
+td {
+  height: 31px;
+  border: solid thin #000;
+}
