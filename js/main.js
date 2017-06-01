@@ -82,11 +82,6 @@ $(document).ready(function() {
             counts.push(0);
           }
 
-          for (var m = 0; m < matches[i].length; m++) {
-            counts[matches[i][m].team1Num]++;
-            counts[matches[i][m].team2Num]++;
-          }
-
             // matches[i].push(new match(((teams.length + offset - 1) % teams.length >= 0) ? (teams.length + offset - 1) : teams.length - Math.abs((teams.length + offset - 2)), ((teams.length + offset - 2) % teams.length >= 0) ? (teams.length + offset - 2) : teams.length - Math.abs((teams.length + offset - 3))));
 
             for (var a = 0; a < Math.floor(teams.length / 2); a++) {
@@ -101,13 +96,23 @@ $(document).ready(function() {
             offset = -1;
           }
 
+          for (var m = 0; m < matches[i].length; m++) {
+            counts[matches[i][m].team1Num]++;
+            counts[matches[i][m].team2Num]++;
+          }
+
         }
 
+        var lastNums = [];
+
         for (var c = 0; c < counts.length; c++) {
-          if (counts[c] == 4) {
-            counts.splice(c, 1);
-            c--;
+          if (counts[c] != 4) {
+            lastNums.push(c);
           }
+        }
+
+        for (var l = 0; l < lastNums.length / 2; l++) {
+          matches[i].push(new match(lastNums[l], lastNums[l + 2]));
         }
       }
     }
