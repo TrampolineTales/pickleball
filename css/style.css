@@ -1,5 +1,5 @@
-.start-time {
-  width: 75px;
+.start-time, .start-date {
+  width: 55px;
 }
 
 html {
@@ -8,7 +8,7 @@ html {
   text-align: center;
 }
 
-input {
+input, textarea {
   margin-top: 5px;
   border-radius: 5px;
   border: thin solid #212121;
@@ -16,12 +16,19 @@ input {
   font-size: 36px;
 }
 
-button {
+button, a {
   cursor: pointer;
   text-align: center;
   border-radius: 5px;
   font-size: 48px;
   border: thin solid #212121;
+}
+
+a {
+  text-decoration: none;
+  color: #000;
+  background-color: rgb(221, 221, 221);
+  padding: 0px 5px;
 }
 
 table {

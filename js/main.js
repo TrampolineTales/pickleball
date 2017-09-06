@@ -1,5 +1,5 @@
 function msToTimeString(ms) {
-  var str = (Math.floor(ms / 1000 / 60 / 60) % 12) + ':';
+  var str = (((Math.floor(ms / 1000 / 60 / 60) % 12) == 0) ? '12' : (Math.floor(ms / 1000 / 60 / 60) % 12)) + ':';
 
   if ((ms / 1000 / 60 % 60) < 10) {
     str += '0';
@@ -31,8 +31,14 @@ function team(name, num) {
 }
 
 $(document).ready(function() {
-  var $schedule = $('<table>');
+  var $schedule = $('<table id="pickleball">');
   $schedule.appendTo('body');
+
+  $('#minute').on('input', function() {
+    if ($('#minute')[0].value == '0') {
+      $('#minute')[0].value = '00';
+    }
+  });
 
   $('#generate-button').click(function() {
     if ($('#teams-num')[0].value == '') {
@@ -44,14 +50,28 @@ $(document).ready(function() {
     } */else {
       $schedule.empty();
 
-      var timeNum = 0;
+      var timeNum = -1;
+
+      var teamsArr = $('#teams').val().split('\n');
+
+      function getTeamName(num) {
+        if (num <= teamsArr.length - 1) {
+          return teamsArr[num];
+        } else {
+          return 'Team #' + (num + 1);
+        }
+      }
 
       var courts = [];
       var teams = [];
       var matches = [[], [], [], [], [], [], []];
       var offset = -1;
 
-      var startTimeMS = $('#start-time')[0].valueAsNumber;
+      var startTimeMS = (parseInt($('#hour')[0].value) * 60 + parseInt($('#minute')[0].value)) * 60 * 1000;
+
+      if ($('#ampm')[0].value == 'AM') {
+        startTimeMS -= 12 * 60 * 60 * 1000;
+      }
 
       for (var i = 0; i < $('#courts-num')[0].value; i++) {
         courts.push('Court #' + (i + 1));
@@ -123,31 +143,27 @@ $(document).ready(function() {
 
       var courtCounter = courts.length;
 
-      $schedule.append($('<tr>').html('<th>Time</th>'));
+      $schedule.append($('<tr>').html('<th>Date</th><th>Time</th><th>Division</th><th>Team 1</th><th>Team 2</th><th>Court</th>'));
 
-      for (var i = 0; i < courts.length; i++) {
-        $schedule.children('tr').append('<th>' + 'Court #' + (i + 1) + '</th>');
-      }
+      var date = new Date(parseInt($('#year').val()), parseInt($('#month').val()) - 1, parseInt($('#day').val()));
 
       for (var i = 0; i < 7; i++) {
-        $schedule.append($('<tr>').html('<td>' + 'Week #' + (i + 1) + '</td>'));
-        for (var c = 0; c < courts.length; c++) {
-          $($('tr')[$('tr').length - 1]).append('<td></td>');
-        }
         for (var a = 0; a < matches[i].length; a++) {
           if (courtCounter == courts.length) {
-            $schedule.append($('<tr>').html('<td>' + msToTimeString(startTimeMS + timeNum * 900000) + '</td>'));
             timeNum++;
             courtCounter = 0;
           }
-          $($('tr')[$('tr').length - 1]).append($('<td>').text(matches[i][a].team1Num + ' vs. ' + matches[i][a].team2Num));
-          courtCounter++;
+          var $tr = $('<tr>');
+          $tr.append($('<td>').html(date.toDateString()));
+          $tr.append($('<td>').html(msToTimeString(startTimeMS + timeNum * 900000)));
+          $tr.append($('<td>'));
+          $tr.append($('<td>').html(getTeamName(matches[i][a].team1Num)));
+          $tr.append($('<td>').html(getTeamName(matches[i][a].team2Num)));
+          $tr.append($('<td>').html(courtCounter + 1));
+          $tr.appendTo($schedule);
+          courtCounter++
         }
-        while (courtCounter != courts.length) {
-          $($('tr')[$('tr').length - 1]).append($('<td>'));
-          courtCounter++;
-        }
-        timeNum = 0;
+        date = new Date(date.valueOf() + 604800000);
       }
     }
 
