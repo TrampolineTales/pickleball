@@ -148,10 +148,14 @@ $(document).ready(function() {
       var date = new Date(parseInt($('#year').val()), parseInt($('#month').val()) - 1, parseInt($('#day').val()));
 
       for (var i = 0; i < 7; i++) {
+        timeNum = -1;
         for (var a = 0; a < matches[i].length; a++) {
           if (courtCounter == courts.length) {
             timeNum++;
             courtCounter = 0;
+          }
+          if (timeNum == -1) {
+            timeNum = 0;
           }
           var $tr = $('<tr>');
           $tr.append($('<td>').html(date.toDateString()));
@@ -164,7 +168,6 @@ $(document).ready(function() {
           courtCounter++
         }
         date = new Date(date.valueOf() + 604800000);
-        timeNum = -1;
       }
     }
 
