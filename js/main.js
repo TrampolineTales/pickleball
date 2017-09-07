@@ -1,8 +1,6 @@
 function msToTimeString(ms) {
   var str = (((Math.floor(ms / 1000 / 60 / 60) % 24) < 10) ? '0' + (Math.floor(ms / 1000 / 60 / 60) % 24) : (Math.floor(ms / 1000 / 60 / 60) % 24)) + ':';
 
-  console.log(str);
-
   if (str == '12:') {
     str = '00:';
   } else if (str == '00:') {
@@ -76,6 +74,7 @@ $(document).ready(function() {
       var teams = [];
       var matches = [[], [], [], [], [], [], []];
       var offset = -1;
+      var maxCourtNum = 0;
 
       var startTimeMS = (parseInt($('#hour')[0].value) * 60 + parseInt($('#minute')[0].value)) * 60 * 1000;
 
@@ -151,6 +150,31 @@ $(document).ready(function() {
 
       // 2. Assign each match to a night and court
 
+      function fixDoubles(pMatches, pDisplayedMatches, num) {
+        var splicedBool = false;
+        var teamsWithMatches = [];
+        for (var a = 0; a < pMatches[num].length; a++) {
+          if (((pDisplayedMatches.length % courts.length) == 0) || ((pDisplayedMatches.length % Math.floor(teams.length / 2)) == 0)) {
+            teamsWithMatches = [];
+            for (var b = 0; b < teams.length; b++) {
+              teamsWithMatches.push(false);
+            }
+          }
+
+          if ((!teamsWithMatches[pMatches[num][a].team1Num]) || (!teamsWithMatches[pMatches[num][a].team2Num])) {
+            teamsWithMatches[pMatches[num][a].team1Num] = true;
+            teamsWithMatches[pMatches[num][a].team2Num] = true;
+            pDisplayedMatches.push(pMatches[num].splice(a, 1)[0]);
+            a--;
+            splicedBool = true;
+          }
+
+          splicedBool = false;
+        }
+
+        // return extraMatches;
+      }
+
       var courtCounter = courts.length;
 
       $schedule.append($('<tr>').html('<th>Date</th><th>Time</th><th>Division</th><th>Team 1</th><th>Team 2</th><th>Court</th>'));
@@ -159,25 +183,60 @@ $(document).ready(function() {
 
       for (var i = 0; i < 7; i++) {
         timeNum = -1;
-        for (var a = 0; a < matches[i].length; a++) {
-          if (courtCounter == courts.length) {
-            timeNum++;
-            courtCounter = 0;
+        courtCounter = 0;
+        // for (var a = 0; a < matches[i].length; a++) {
+        //   if (courtCounter == courts.length) {
+        //     timeNum++;
+        //     courtCounter = 0;
+        //   }
+        //   if (timeNum == -1) {
+        //     timeNum = 0;
+        //   }
+        //   var $tr = $('<tr>');
+        //   $tr.append($('<td>').html((date.getDate() > 9 ? date.getDate() : '0' + date.getDate()) + '/' + (date.getMonth() + 1 > 9 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1))  + '/' + date.getFullYear()));
+        //   $tr.append($('<td>').html(msToTimeString(startTimeMS + timeNum * 900000)));
+        //   $tr.append($('<td>'));
+        //   $tr.append($('<td>').html(getTeamName(matches[i][a].team1Num)));
+        //   $tr.append($('<td>').html(getTeamName(matches[i][a].team2Num)));
+        //   $tr.append($('<td>').html(courtCounter + 1));
+        //   $tr.appendTo($schedule);
+        //   courtCounter++
+        // }
+
+        while (matches[i].length > 0) {
+          var displayedMatches = [];
+          fixDoubles(matches, displayedMatches, i);
+          courtCounter = 0;
+          timeNum++;
+          for (var a = 0; a < displayedMatches.length; a++) {
+            if ((courtCounter == courts.length) || (courtCounter == Math.floor(teams.length / 2))) {
+              timeNum++;
+              maxCourtNum = courtCounter;
+              courtCounter = 0;
+            }
+            if (timeNum == -1) {
+              timeNum = 0;
+            }
+            var $tr = $('<tr>');
+            $tr.append($('<td>').html((date.getDate() > 9 ? date.getDate() : '0' + date.getDate()) + '/' + (date.getMonth() + 1 > 9 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1))  + '/' + date.getFullYear()));
+            $tr.append($('<td>').html(msToTimeString(startTimeMS + timeNum * 900000)));
+            $tr.append($('<td>'));
+            $tr.append($('<td>').html(getTeamName(displayedMatches[a].team1Num)));
+            $tr.append($('<td>').html(getTeamName(displayedMatches[a].team2Num)));
+            $tr.append($('<td>').html(courtCounter + 1));
+            $tr.appendTo($schedule);
+            courtCounter++
           }
-          if (timeNum == -1) {
-            timeNum = 0;
-          }
-          var $tr = $('<tr>');
-          $tr.append($('<td>').html((date.getDate() > 9 ? date.getDate() : '0' + date.getDate()) + '/' + (date.getMonth() + 1 > 9 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1))  + '/' + date.getFullYear()));
-          $tr.append($('<td>').html(msToTimeString(startTimeMS + timeNum * 900000)));
-          $tr.append($('<td>'));
-          $tr.append($('<td>').html(getTeamName(matches[i][a].team1Num)));
-          $tr.append($('<td>').html(getTeamName(matches[i][a].team2Num)));
-          $tr.append($('<td>').html(courtCounter + 1));
-          $tr.appendTo($schedule);
-          courtCounter++
         }
         date = new Date(date.valueOf() + 604800000);
+      }
+    }
+
+    if (maxCourtNum < courts.length) {
+      if (courts.length - maxCourtNum == 1) {
+        alert('WARNING: 1 court cannot be utilized with this number of teams!');
+      } else {
+        alert('WARNING: ' + (courts.length - maxCourtNum) + ' courts cannot be utilized with this number of teams!');
       }
     }
 
