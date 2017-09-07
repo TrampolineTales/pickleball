@@ -55,7 +55,7 @@ $(document).ready(function() {
       var teamsArr = $('#teams').val().split('\n');
 
       function getTeamName(num) {
-        if (num <= teamsArr.length - 1) {
+        if ((num <= teamsArr.length - 1) && (teamsArr[num] != '')) {
           return teamsArr[num];
         } else {
           return 'Team #' + (num + 1);
@@ -69,8 +69,8 @@ $(document).ready(function() {
 
       var startTimeMS = (parseInt($('#hour')[0].value) * 60 + parseInt($('#minute')[0].value)) * 60 * 1000;
 
-      if ($('#ampm')[0].value == 'AM') {
-        startTimeMS -= 12 * 60 * 60 * 1000;
+      if ($('#ampm')[0].value == 'PM') {
+        startTimeMS += 12 * 60 * 60 * 1000;
       }
 
       for (var i = 0; i < $('#courts-num')[0].value; i++) {
@@ -164,6 +164,7 @@ $(document).ready(function() {
           courtCounter++
         }
         date = new Date(date.valueOf() + 604800000);
+        timeNum = -1;
       }
     }
 
