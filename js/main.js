@@ -1,5 +1,13 @@
 function msToTimeString(ms) {
-  var str = (((Math.floor(ms / 1000 / 60 / 60) % 12) == 0) ? '12' : (Math.floor(ms / 1000 / 60 / 60) % 12)) + ':';
+  var str = (((Math.floor(ms / 1000 / 60 / 60) % 24) < 10) ? '0' + (Math.floor(ms / 1000 / 60 / 60) % 24) : (Math.floor(ms / 1000 / 60 / 60) % 24)) + ':';
+
+  console.log(str);
+
+  if (str == '12:') {
+    str = '00:';
+  } else if (str == '00:') {
+    str = '12:';
+  }
 
   if ((ms / 1000 / 60 % 60) < 10) {
     str += '0';
@@ -7,11 +15,13 @@ function msToTimeString(ms) {
 
   str += ms / 1000 / 60 % 60;
 
-  if (Math.floor(ms / 1000 / 60 / 60) < 12) {
-    return str + ' AM';
-  } else {
-    return str + ' PM';
-  }
+  return str;
+
+  // if (Math.floor(ms / 1000 / 60 / 60) < 12) {
+  //   return str + ' AM';
+  // } else {
+  //   return str + ' PM';
+  // }
 }
 
 function match(team1Num, team2Num) {
@@ -158,7 +168,7 @@ $(document).ready(function() {
             timeNum = 0;
           }
           var $tr = $('<tr>');
-          $tr.append($('<td>').html(date.toDateString()));
+          $tr.append($('<td>').html((date.getDate() > 9 ? date.getDate() : '0' + date.getDate()) + '/' + (date.getMonth() + 1 > 9 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1))  + '/' + date.getFullYear()));
           $tr.append($('<td>').html(msToTimeString(startTimeMS + timeNum * 900000)));
           $tr.append($('<td>'));
           $tr.append($('<td>').html(getTeamName(matches[i][a].team1Num)));
