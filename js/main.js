@@ -203,13 +203,22 @@ $(document).ready(function() {
         //   courtCounter++
         // }
 
+        function alreadyInTimeslot(displayedMatches, num) {
+          for (var i = timeNum * courts.length; i < num; i++) {
+            if ((displayedMatches[num].team1Num == displayedMatches[i].team1Num) || (displayedMatches[num].team2Num == displayedMatches[i].team2Num)) {
+              return true;
+            }
+          }
+          return false;
+        }
+
         while (matches[i].length > 0) {
           var displayedMatches = [];
           fixDoubles(matches, displayedMatches, i);
           courtCounter = 0;
           timeNum++;
           for (var a = 0; a < displayedMatches.length; a++) {
-            if ((courtCounter == courts.length) || (courtCounter == Math.floor(teams.length / 2))) {
+            if (alreadyInTimeslot(displayedMatches, a) || (courtCounter == courts.length) || (courtCounter == Math.floor(teams.length / 2))) {
               timeNum++;
               maxCourtNum = courtCounter;
               courtCounter = 0;
@@ -232,13 +241,13 @@ $(document).ready(function() {
       }
     }
 
-    if (maxCourtNum < courts.length) {
-      if (courts.length - maxCourtNum == 1) {
-        alert('WARNING: 1 court cannot be utilized with this number of teams!');
-      } else {
-        alert('WARNING: ' + (courts.length - maxCourtNum) + ' courts cannot be utilized with this number of teams!');
-      }
-    }
+    // if (maxCourtNum < courts.length) {
+    //   if (courts.length - maxCourtNum == 1) {
+    //     alert('WARNING: 1 court cannot be utilized with this number of teams!');
+    //   } else {
+    //     alert('WARNING: ' + (courts.length - maxCourtNum) + ' courts cannot be utilized with this number of teams!');
+    //   }
+    // }
 
   });
 });
